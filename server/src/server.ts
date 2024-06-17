@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import app from './app';
+import app from './infra/server/app';
 
 const logColorEnv = (env: string) => {
   switch (env) {
@@ -15,9 +15,6 @@ const logColorEnv = (env: string) => {
 
 app.listen(process.env.PORT, () =>
   console.log(
-    `Server running on Port ` +
-      chalk.bold.blue(process.env.PORT) +
-      ` - ` +
-      chalk.bold[logColorEnv(process.env.NODE_ENV as string)]`${process.env.NODE_ENV}`
-  )
+    `Server running on Port ` + chalk.bold.blue(process.env.PORT) + ` - ` + chalk.bold[logColorEnv(process.env.NODE_ENV as string)]`${process.env.NODE_ENV}`,
+  ),
 );

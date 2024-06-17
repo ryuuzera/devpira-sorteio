@@ -13,18 +13,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   name      String
   avatarUrl String
-  email     String
-  winner    Winner?  @relation("UserWinner")
+  email     String  @unique
+  winner    Winner? @relation("UserWinner")
   winnerId  Int?
 }
 
 model Winner {
-  id     Int    @id @default(autoincrement())
-  user   User   @relation("UserWinner", fields: [userId], references: [id])
-  userId Int @unique
+  id     Int  @id @default(autoincrement())
+  user   User @relation("UserWinner", fields: [userId], references: [id])
+  userId Int  @unique
 }

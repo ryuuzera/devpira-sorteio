@@ -1,5 +1,5 @@
 import express from 'express';
-import userRoutes from '../domain/routes/user.routes';
+import userRoutes from '../infra/routes/user.routes';
 
 const routes = express();
 

@@ -1,6 +1,7 @@
 import cors from 'cors';
 import express from 'express';
-import routes from './config/routes';
+import 'reflect-metadata';
+import routes from '../../config/routes';
 
 require('dotenv').config();
 const app = express();
