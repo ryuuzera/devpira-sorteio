@@ -1,5 +1,5 @@
 import { PrismaClient, User } from '@prisma/client';
-import { GetUserDTO } from '../../application/use-cases/getUser/getuser.dto';
+import GetUserDTO from '../../application/use-cases/getUser/getuser.dto';
 import IRepository from './@types/irepository';
 
 export class PrismaUserRepository implements IRepository<User> {

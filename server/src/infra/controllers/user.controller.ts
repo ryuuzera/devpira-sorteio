@@ -2,9 +2,10 @@ import { plainToClass } from 'class-transformer';
 import { Request, Response } from 'express';
 import { CreateUserDTO } from '../../application/use-cases/createUser/createuser.dto';
 import { CreateUserUseCase } from '../../application/use-cases/createUser/createuser.usecase';
-import { GetUserDTO } from '../../application/use-cases/getUser/getuser.dto';
+import  GetUserDTO  from '../../application/use-cases/getUser/getuser.dto';
 import { GetUserUseCase } from '../../application/use-cases/getUser/getuser.usecase';
 import { PrismaUserRepository } from '../../domain/repositories/prisma.user.repository';
+import { objIsEmpty } from '../utils/object.utils';
 
 export class UserController {
   async create(req: Request, res: Response): Promise<Response> {
@@ -28,7 +29,7 @@ export class UserController {
     });
 
     try {
-      const result = await getUserUseCase.execute(getUserDTO);
+      const result = await getUserUseCase.execute(!objIsEmpty(getUserDTO) ? getUserDTO : undefined);
       return res.status(200).send(result);
     } catch (err: any) {
       return res.status(400).send({ error: err.message });

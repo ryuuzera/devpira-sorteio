@@ -1,11 +1,6 @@
 import { IsEmail, IsNumber, IsOptional } from 'class-validator';
 
-interface IGetUserDTO {
-  id?: number;
-  email?: string;
-}
-
-export class GetUserDTO implements IGetUserDTO {
+export default class GetUserDTO {
   @IsOptional()
   @IsNumber()
   id?: number;
