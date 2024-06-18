@@ -6,7 +6,6 @@ import Link from 'next/link';
 import QRCode from 'qrcode.react';
 import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
-import './roulette.css';
 
 const GiveawayPage = (props) => {
   const [users, setUsers] = useState(props.users ?? []);
@@ -50,7 +49,7 @@ const GiveawayPage = (props) => {
           setIsSpinning(false);
           setSpinningOutcome(winner);
         }
-      }, 11000);
+      }, 10000);
     }
   };
 
@@ -118,26 +117,28 @@ const GiveawayPage = (props) => {
           <div
             className={`${spinOpen ? 'flex' : 'hidden'} flex-col h-full justify-evenly absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
           >
-            <div className="absolute inset-0 bg-[rgba(0,0,0,0.8)] h-screen" onClick={handleSpinClose}></div>
+            <div className="absolute inset-0 bg-[rgba(0,0,0,0.9)] h-screen" onClick={handleSpinClose}></div>
             <div className="bg-slate-800 h-80 items-center relative flex justify-center width-full mx-0 my-auto flex-col">
               <div className="absolute z-10 top-1/2 left-1/2 -translate-y-1/2 h-44 w-[3px] bg-slate-400"></div>
               <div className="flex w-full" ref={wheelRef}>
                 {spinOpen &&
-                  Array.from({ length: users.length * 2 }).map((_, rowIndex) => (
+                  Array.from({ length: users.filter((x) => x.winnerId == null).length * 2 }).map((_, rowIndex) => (
                     <div className="flex" key={rowIndex}>
-                      {users.map((_, index) => (
-                        <div className={`h-32 w-32 m-[3px] rounded-md flex items-center justify-center overflow-hidden text-sm`} key={_.name + index}>
-                          <Image
-                            src={_.avatarUrl?.includes(`_profile_400x400`) ? `${process.env.NEXT_PUBLIC_IMG_CDN}/users-img/${_.avatarUrl}` : _.avatarUrl}
-                            alt={_.name}
-                            height={50}
-                            width={50}
-                            loading="lazy"
-                            quality={90}
-                            style={{ objectFit: 'cover', width: '105%', height: '105%' }}
-                          />
-                        </div>
-                      ))}
+                      {users
+                        .filter((x) => x.winnerId == null)
+                        .map((_, index) => (
+                          <div className={`h-32 w-32 m-[3px] rounded-md flex items-center justify-center overflow-hidden text-sm`} key={_.name + index}>
+                            <Image
+                              src={_.avatarUrl?.includes(`_profile_400x400`) ? `${process.env.NEXT_PUBLIC_IMG_CDN}/users-img/${_.avatarUrl}` : _.avatarUrl}
+                              alt={_.name}
+                              height={50}
+                              width={50}
+                              loading="lazy"
+                              quality={90}
+                              style={{ objectFit: 'cover', width: '105%', height: '105%' }}
+                            />
+                          </div>
+                        ))}
                     </div>
                   ))}
               </div>
