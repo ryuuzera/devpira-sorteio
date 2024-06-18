@@ -5,27 +5,24 @@ import Image from 'next/image';
 import Link from 'next/link';
 import QRCode from 'qrcode.react';
 import { useEffect, useRef, useState } from 'react';
+import io from 'socket.io-client';
 import './roulette.css';
-import io from 'socket.io-client'
 
 const GiveawayPage = (props) => {
   const [users, setUsers] = useState(props.users ?? []);
   const CARD_WIDTH = 128 + 3 * 2;
 
   useEffect(() => {
-    const socket = io("http://localhost:4000")
-  })
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     fetch(`http://localhost:5000/api/v1/user`)
-  //       .then((res) => res.json())
-  //       .then((res) => {
-  //         setUsers(res);
-  //       });
-  //   }, 3000);
+    const socket = io(`${process.env.NEXT_PUBLIC_WEBSOCKET_URL}`);
+    socket.on('user-created', (data) => {
+      setUsers((prev) => [...prev, data]);
+    });
 
-  //   return () => clearInterval(interval);
-  // }, []);
+    return () => {
+      socket.removeAllListeners('user-created');
+      socket.disconnect();
+    };
+  }, []);
 
   const [isSpinning, setIsSpinning] = useState(false);
   const [spinOpen, setSpinOpen] = useState(false);
@@ -70,6 +67,12 @@ const GiveawayPage = (props) => {
     }, 100);
   };
 
+  const handleSpinClose = () => {
+    if (!isSpinning) {
+      setSpinOpen(false);
+    }
+  };
+
   return (
     <>
       <div className="h-screen bg-slate-800 relative overflow-hidden">
@@ -78,14 +81,15 @@ const GiveawayPage = (props) => {
           <div className="flex flex-row h-52 gap-3">
             <div className="w-[25%] h-auto bg-slate-700 rounded-md flex flex-col items-center justify-center gap-2">
               <Link href={'/join'}>
-                <QRCode value={`${process.env.NEXT_PDEPLOY_URL}/join`} />
+                <QRCode value={`${process.env.NEXT_PUBLIC_DEPLOY_URL}/join`} />
               </Link>
-              <h1>Participe utilizando o QR Code</h1>
+              <h1 className="text-white">Participe utilizando o QR Code</h1>
+              <Link href={'/join'}>
+                <h1 className="text-purple-300 underline-offset-2 underline">{`${process.env.NEXT_PUBLIC_DEPLOY_URL}/join`}</h1>
+              </Link>
             </div>
             <div className="w-full h-auto bg-slate-700 rounded-md flex items-center justify-center">
-              <Button onClick={() => handleSpinClick()} className="bg-red-300">
-                Sortear
-              </Button>
+              <Button onClick={() => handleSpinClick()}>Sortear</Button>
             </div>
           </div>
           <div className="text-xl text-white m-2">{users?.length} Usuários</div>
@@ -114,7 +118,7 @@ const GiveawayPage = (props) => {
           <div
             className={`${spinOpen ? 'flex' : 'hidden'} flex-col h-full justify-evenly absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
           >
-            <div className="absolute inset-0 backdrop-filter bg-[rgba(0,0,0,0.4)] backdrop-blur-sm"></div>
+            <div className="absolute inset-0 backdrop-filter bg-[rgba(0,0,0,0.5)] backdrop-blur-sm" onClick={handleSpinClose}></div>
             <div className="bg-slate-800 h-80 items-center relative flex justify-center width-full mx-0 my-auto flex-col">
               <div className="absolute z-10 top-1/2 left-1/2 -translate-y-1/2 h-44 w-[3px] bg-slate-400"></div>
               <div className="flex w-full" ref={wheelRef}>
@@ -139,7 +143,9 @@ const GiveawayPage = (props) => {
               {!isSpinning && spinningOutcome?.name && (
                 <div className="text-white w-full text-center absolute bottom-2">
                   <span>O vencedor é {spinningOutcome?.name}!</span>
-                  <Button onClick={handleSpinClick} className='ml-4'>Sortear novamente</Button>
+                  <Button onClick={handleSpinClick} className="ml-4">
+                    Sortear novamente
+                  </Button>
                 </div>
               )}
             </div>

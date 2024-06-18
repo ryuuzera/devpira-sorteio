@@ -13,4 +13,12 @@ io.on('connection', (socket) => {
   console.log(`user conected on id ${socket.id}`);
 });
 
-export { httpServer };
+io.on('disconnect', (socket) => {
+  console.log(`user ${socket.id} disconnected`);
+});
+
+function sendMessage(event, value) {
+  io.emit(event, value);
+}
+
+export { httpServer, sendMessage };
