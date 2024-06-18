@@ -64,7 +64,7 @@ const GiveawayPage = (props) => {
         const randomOutcome = users[randomIndex];
         spinWheel(randomOutcome);
       }, 3000);
-    }, 100);
+    }, 0);
   };
 
   const handleSpinClose = () => {
@@ -98,7 +98,7 @@ const GiveawayPage = (props) => {
               users?.map((_, index: number) => (
                 <div key={_.name + index} className="h-32 w-32 bg-slate-200 rounded-md overflow-clip relative flex items-center justify-center">
                   <Image
-                    src={_.avatarUrl?.includes(`_profile_400x400`) ? '/users-img/' + _.avatarUrl : _.avatarUrl}
+                    src={`${process.env.NEXT_PUBLIC_IMG_CDN}/users-img/${_.avatarUrl}`}
                     key={_.name + index + 1}
                     alt={_.name}
                     height={128}
@@ -118,27 +118,28 @@ const GiveawayPage = (props) => {
           <div
             className={`${spinOpen ? 'flex' : 'hidden'} flex-col h-full justify-evenly absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
           >
-            <div className="absolute inset-0 backdrop-filter bg-[rgba(0,0,0,0.5)] backdrop-blur-sm" onClick={handleSpinClose}></div>
+            <div className="absolute inset-0 bg-[rgba(0,0,0,0.8)] h-screen" onClick={handleSpinClose}></div>
             <div className="bg-slate-800 h-80 items-center relative flex justify-center width-full mx-0 my-auto flex-col">
               <div className="absolute z-10 top-1/2 left-1/2 -translate-y-1/2 h-44 w-[3px] bg-slate-400"></div>
               <div className="flex w-full" ref={wheelRef}>
-                {Array.from({ length: users.length * 30 }).map((_, rowIndex) => (
-                  <div className="flex" key={rowIndex}>
-                    {users.map((_, index) => (
-                      <div className={`h-32 w-32 m-[3px] rounded-sm flex items-center justify-center bg-white overflow-hidden text-sm`} key={index}>
-                        <Image
-                          src={_.avatarUrl?.includes(`_profile_400x400`) ? '/users-img/' + _.avatarUrl : _.avatarUrl}
-                          alt={_.name}
-                          key={_.name + index + 1}
-                          height={128}
-                          width={128}
-                          quality={90}
-                          style={{ objectFit: 'cover', width: '105%', height: '105%' }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ))}
+                {spinOpen &&
+                  Array.from({ length: users.length * 2 }).map((_, rowIndex) => (
+                    <div className="flex" key={rowIndex}>
+                      {users.map((_, index) => (
+                        <div className={`h-32 w-32 m-[3px] rounded-md flex items-center justify-center overflow-hidden text-sm`} key={_.name + index}>
+                          <Image
+                            src={_.avatarUrl?.includes(`_profile_400x400`) ? `${process.env.NEXT_PUBLIC_IMG_CDN}/users-img/${_.avatarUrl}` : _.avatarUrl}
+                            alt={_.name}
+                            height={50}
+                            width={50}
+                            loading="lazy"
+                            quality={90}
+                            style={{ objectFit: 'cover', width: '105%', height: '105%' }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ))}
               </div>
               {!isSpinning && spinningOutcome?.name && (
                 <div className="text-white w-full text-center absolute bottom-2">
