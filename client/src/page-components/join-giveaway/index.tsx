@@ -8,11 +8,13 @@ import { useEffect, useState } from 'react';
 const JoinGiveawayPage = () => {
   const [form, setForm] = useState<any>(null);
   const [avatar, setAvatar] = useState<File>();
+  const session = useSession();
 
   const handleValues = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
+  
   const handleAvatarChange = (event) => {
     const file = event.target.files[0];
     setAvatar(file);
@@ -41,7 +43,7 @@ const JoinGiveawayPage = () => {
       console.error('Erro ao enviar dados:', error);
     }
   };
-  const session = useSession();
+
 
   async function urlToFile(imageUrl) {
     const response = await fetch(imageUrl);
@@ -59,6 +61,7 @@ const JoinGiveawayPage = () => {
       });
     });
   }, [session]);
+
   return (
     <form
       onSubmit={(e) => {

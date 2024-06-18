@@ -6,7 +6,7 @@ import JoinGiveawayPage from '@/page-components/join-giveaway';
 
 async function getUsers() {
   try {
-    const res = await fetch('http://localhost:3000/api/user', {
+    const res = await fetch('http://localhost:5000/api/v1/user', {
       cache: 'no-cache',
     });
     return await res.json();
@@ -20,9 +20,9 @@ export default async function Home() {
   const session = await getServerSession(authOptions);
   return (
     <main>
-      {/* <GiveawayPage users={users} /> */}
+      <GiveawayPage users={users} />
       {/* <RoulettePage /> */}
-      <JoinGiveawayPage />
+      {/* <JoinGiveawayPage /> */}
     </main>
   );
 }

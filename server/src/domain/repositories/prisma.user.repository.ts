@@ -1,9 +1,14 @@
 import { PrismaClient, User } from '@prisma/client';
 import GetUserDTO from '../../application/use-cases/getUser/getuser.dto';
+import prisma from '../../infra/db/prismaclient';
 import IRepository from './@types/irepository';
 
 export class PrismaUserRepository implements IRepository<User> {
-  private prisma = new PrismaClient();
+  private prisma: PrismaClient;
+
+  constructor() {
+    this.prisma = prisma;
+  }
 
   async create(object: Omit<User, 'id'>): Promise<User | null> {
     return await this.prisma.user.create({ data: object });
