@@ -1,5 +1,6 @@
 import { PrismaClient, User } from '@prisma/client';
 import GetUserDTO from '../../application/use-cases/getUser/getuser.dto';
+import UpdateUserDTO from '../../application/use-cases/updateUser/updateuser.dto';
 import prisma from '../../infra/db/prismaclient';
 import IRepository from './@types/irepository';
 
@@ -14,7 +15,7 @@ export class PrismaUserRepository implements IRepository<User> {
     return await this.prisma.user.create({ data: object });
   }
 
-  async update(object: { id: number; name: string; avatarUrl: string; email: string; winnerId: number | null }): Promise<boolean> {
+  async update(object: UpdateUserDTO): Promise<boolean> {
     const success = await this.prisma.user.update({
       where: {
         id: Number(object.id),
