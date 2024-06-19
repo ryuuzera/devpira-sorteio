@@ -18,12 +18,11 @@ model User {
   name      String
   avatarUrl String
   email     String  @unique
-  winnerId  Int?    @unique
-  winner    Winner? @relation(fields: [winnerId], references: [id])
+  winner    Winner?
 }
 
 model Winner {
-  id     Int  @id @default(autoincrement())
-  userId Int  @unique
-  user User?
+  id     Int   @id @default(autoincrement())
+  userId Int   @unique
+  user   User  @relation(fields: [userId], references: [id])
 }

@@ -1,8 +1,10 @@
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import GetUserDTO from '../../application/use-cases/getUser/getuser.dto';
 import UpdateUserDTO from '../../application/use-cases/updateUser/updateuser.dto';
 import prisma from '../../infra/db/prismaclient';
 import IRepository from './@types/irepository';
+import { CreateUserDTO } from '../../application/use-cases/createUser/createuser.dto';
+import User from '../entities/user';
 
 export class PrismaUserRepository implements IRepository<User> {
   private prisma: PrismaClient;
@@ -11,7 +13,7 @@ export class PrismaUserRepository implements IRepository<User> {
     this.prisma = prisma;
   }
 
-  async create(object: Omit<User, 'id'>): Promise<User | null> {
+  async create(object: CreateUserDTO): Promise<User | null> {
     return await this.prisma.user.create({ data: object });
   }
 
@@ -33,9 +35,12 @@ export class PrismaUserRepository implements IRepository<User> {
       where: {
         ...data,
       },
+      include: {
+        winner: true,
+      },
     });
 
-    return users;
+    return users as User[];
   }
 
   async get(data?: GetUserDTO): Promise<User | null> {
@@ -43,9 +48,12 @@ export class PrismaUserRepository implements IRepository<User> {
       where: {
         ...(data as any),
       },
+      include: {
+        winner: true,
+      },
     });
 
-    return user;
+    return user as User;
   }
 
   async delete(id: string | number): Promise<boolean> {

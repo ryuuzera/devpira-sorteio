@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    env_file:
+      - ./client/.env.local
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+      - '3002:3002'
+    env_file:
+      - ./server/.env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+  postgres:
+    image: bitnami/postgresql:latest
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=giveaways
+    volumes:
+      - giveaways_pg_data:/bitnami/postgresql
+    networks:
+      - app-network
+
+volumes:
+  giveaways_pg_data:
+
+networks:
+  app-network:

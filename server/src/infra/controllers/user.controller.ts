@@ -7,10 +7,10 @@ import GetUserDTO from '../../application/use-cases/getUser/getuser.dto';
 import { GetUserUseCase } from '../../application/use-cases/getUser/getuser.usecase';
 import UpdateUserDTO from '../../application/use-cases/updateUser/updateuser.dto';
 import { UpdateUserUseCase } from '../../application/use-cases/updateUser/updateuser.usecase';
-import { PrismaUserRepository } from '../../domain/repositories/prisma.user.repository';
 import { sendMessage } from '../server/socket';
 import { objIsEmpty } from '../utils/object.utils';
 import { handleErrorMessage } from '../utils/prisma.error-handler';
+import { PrismaUserRepository } from '../../domain/repositories/prisma.user.repository';
 
 export class UserController {
   async create(req: Request, res: Response): Promise<Response> {

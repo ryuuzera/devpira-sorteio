@@ -10,6 +10,17 @@ export class FileService {
     const fileName = `${uuidv4()}_profile_400x400.webp`;
     const filePath = path.join(process.cwd(), 'public/users-img/', fileName);
 
+    await this.processLqUserProfileImage(fileName, fileBuffer);
+
+    await fs.writeFile(filePath, img);
+    return fileName;
+  }
+
+  private async processLqUserProfileImage(fileName: string, fileBuffer: Buffer): Promise<string> {
+    const img = await sharp(fileBuffer).resize(400, 400, { fit: 'cover' }).webp({ quality: 10 }).toBuffer();
+
+    const filePath = path.join(process.cwd(), 'public/users-img/', fileName.replace('400x400', '400x400_low'));
+
     await fs.writeFile(filePath, img);
     return fileName;
   }

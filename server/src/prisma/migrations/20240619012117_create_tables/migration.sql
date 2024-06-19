@@ -4,7 +4,6 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "avatarUrl" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "winnerId" INTEGER,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -16,6 +15,9 @@ CREATE TABLE "Winner" (
 
     CONSTRAINT "Winner_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Winner_userId_key" ON "Winner"("userId");
