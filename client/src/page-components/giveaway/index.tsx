@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import Image from 'next/image';
 import Link from 'next/link';
 import QRCode from 'qrcode.react';
@@ -9,6 +10,8 @@ import io from 'socket.io-client';
 
 const GiveawayPage = (props) => {
   const [users, setUsers] = useState(props.users ?? []);
+  const filteredUsers = users.filter((x) => !x.winnerId);
+  const winnerUsers = users.filter((x) => x.winnerId > 0);
   const CARD_WIDTH = 128 + 3 * 2;
 
   useEffect(() => {
@@ -28,9 +31,13 @@ const GiveawayPage = (props) => {
   const [spinningOutcome, setSpinningOutcome] = useState<any | null>(null); // Alterado para any para acomodar a estrutura de dados
   const wheelRef = useRef<any>(null);
 
+  const updateWinner = (id: number) => {
+
+  }
+
   const spinWheel = (winner: any) => {
-    const position = users.indexOf(winner);
-    const landingPosition = 12 * CARD_WIDTH * users.length + position * CARD_WIDTH;
+    const position = filteredUsers.indexOf(winner);
+    const landingPosition = 12 * CARD_WIDTH * filteredUsers.length + position * CARD_WIDTH;
     const randomize = Math.floor(Math.random() * CARD_WIDTH);
     const targetPosition = landingPosition + randomize;
 
@@ -59,8 +66,8 @@ const GiveawayPage = (props) => {
       setSpinOpen(true);
       setTimeout(() => {
         setIsSpinning(true);
-        const randomIndex = Math.floor(Math.random() * users.length);
-        const randomOutcome = users[randomIndex];
+        const randomIndex = Math.floor(Math.random() * filteredUsers.length);
+        const randomOutcome = filteredUsers[randomIndex];
         spinWheel(randomOutcome);
       }, 3000);
     }, 0);
@@ -87,8 +94,32 @@ const GiveawayPage = (props) => {
                 <h1 className="text-purple-300 underline-offset-2 underline">{`${process.env.NEXT_PUBLIC_DEPLOY_URL}/join`}</h1>
               </Link>
             </div>
-            <div className="w-full h-auto bg-slate-700 rounded-md flex items-center justify-center">
+            <div className="w-full h-auto gap-2 bg-slate-700 rounded-md flex items-center justify-center">
               <Button onClick={() => handleSpinClick()}>Sortear</Button>
+
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button>Mostrar vencedores</Button>
+                </SheetTrigger>
+                <SheetContent side={'right'}>
+                  <SheetHeader>
+                    <SheetTitle>Edit profile</SheetTitle>
+                    <SheetDescription>Make changes to your profile here. Click save when you're done.</SheetDescription>
+                  </SheetHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      {winnerUsers.map((x, index) => {
+                        return <h1>{x.name}</h1>;
+                      })}
+                    </div>
+                  </div>
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button type="submit">Save changes</Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
           <div className="text-xl text-white m-2">{users?.length} Usuários</div>
@@ -117,14 +148,14 @@ const GiveawayPage = (props) => {
           <div
             className={`${spinOpen ? 'flex' : 'hidden'} flex-col h-full justify-evenly absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
           >
-            <div className="absolute inset-0 bg-[rgba(0,0,0,0.9)] h-screen" onClick={handleSpinClose}></div>
+            <div className="absolute inset-0 bg-[rgba(0,0,0,0.9)] h-screen" onClick={!isSpinning ? handleSpinClose : () => {}}></div>
             <div className="bg-slate-800 h-80 items-center relative flex justify-center width-full mx-0 my-auto flex-col">
               <div className="absolute z-10 top-1/2 left-1/2 -translate-y-1/2 h-44 w-[3px] bg-slate-400"></div>
               <div className="flex w-full" ref={wheelRef}>
                 {spinOpen &&
-                  Array.from({ length: users.filter((x) => x.winnerId == null).length * 2 }).map((_, rowIndex) => (
+                  Array.from({ length: filteredUsers.length * 2 }).map((_, rowIndex) => (
                     <div className="flex" key={rowIndex}>
-                      {users
+                      {filteredUsers
                         .filter((x) => x.winnerId == null)
                         .map((_, index) => (
                           <div className={`h-32 w-32 m-[3px] rounded-md flex items-center justify-center overflow-hidden text-sm`} key={_.name + index}>
