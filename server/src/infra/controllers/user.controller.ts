@@ -1,5 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { Request, Response } from 'express';
+import { FileService } from '../../application/services/fileservice';
 import { CreateUserDTO } from '../../application/use-cases/createUser/createuser.dto';
 import { CreateUserUseCase } from '../../application/use-cases/createUser/createuser.usecase';
 import GetUserDTO from '../../application/use-cases/getUser/getuser.dto';
@@ -10,23 +11,22 @@ import { PrismaUserRepository } from '../../domain/repositories/prisma.user.repo
 import { sendMessage } from '../server/socket';
 import { objIsEmpty } from '../utils/object.utils';
 import { handleErrorMessage } from '../utils/prisma.error-handler';
-import { FileService } from '../../application/services/fileservice';
 
 export class UserController {
   async create(req: Request, res: Response): Promise<Response> {
     const createUserUseCase = new CreateUserUseCase(new PrismaUserRepository());
     const fileService = new FileService();
 
-    const user: CreateUserDTO = req.body; 
+    const user: CreateUserDTO = req.body;
 
     try {
       const { file } = req;
-      
+
       if (file) {
         const fileName = await fileService.processUserProfileImage(file.buffer);
         user.avatarUrl = fileName;
       }
-    
+
       if (!file && user.avatarUrl) {
         const newFile = await fileService.downloadImageAsBuffer(user.avatarUrl);
         const fileName = await fileService.processUserProfileImage(newFile);
@@ -37,6 +37,7 @@ export class UserController {
       sendMessage('user-created', createdUser);
       return res.status(201).send();
     } catch (err: any) {
+      fileService.deleteImageByFileName(user.avatarUrl);
       return res.status(400).send({ error: err.message });
     }
   }
