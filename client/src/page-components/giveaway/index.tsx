@@ -11,8 +11,8 @@ import io from 'socket.io-client';
 
 const GiveawayPage = (props) => {
   const [users, setUsers] = useState(props.users ?? []);
-  const [filteredUsers, setFilteredUsers] = useState(props.users.filter((x) => !x.winner));
-  const winnerUsers = users.filter((x) => x.winner?.userId > 0);
+  const [filteredUsers, setFilteredUsers] = useState(props.users?.filter((x) => !x.winner) ?? []);
+  const winnerUsers = users?.filter((x) => x.winner?.userId > 0);
   const CARD_WIDTH = 128 + 3 * 2;
 
   useEffect(() => {
@@ -63,12 +63,12 @@ const GiveawayPage = (props) => {
   };
 
   const refreshUsers = () => {
-    setFilteredUsers(users.filter((x) => !x.winner));
+    setFilteredUsers(users?.filter((x) => !x.winner));
   };
 
   const spinWheel = (winner: any) => {
-    const position = filteredUsers.indexOf(winner);
-    const landingPosition = 12 * CARD_WIDTH * filteredUsers.length + position * CARD_WIDTH;
+    const position = filteredUsers?.indexOf(winner);
+    const landingPosition = 12 * CARD_WIDTH * filteredUsers?.length + position * CARD_WIDTH;
     const randomize = Math.floor(Math.random() * CARD_WIDTH);
     const targetPosition = landingPosition + randomize;
 
@@ -98,7 +98,7 @@ const GiveawayPage = (props) => {
       refreshUsers();
       setTimeout(() => {
         setIsSpinning(true);
-        const randomIndex = Math.floor(Math.random() * filteredUsers.length);
+        const randomIndex = Math.floor(Math.random() * filteredUsers?.length);
         const randomOutcome = filteredUsers[randomIndex];
         updateWinnerId(randomOutcome.id);
         spinWheel(randomOutcome);
@@ -195,9 +195,9 @@ const GiveawayPage = (props) => {
               <div className="absolute z-10 top-1/2 left-1/2 -translate-y-1/2 h-44 w-[3px] bg-slate-400"></div>
               <div className="flex w-full" ref={wheelRef}>
                 {spinOpen &&
-                  Array.from({ length: filteredUsers.length * 2 }).map((_, rowIndex) => (
+                  Array.from({ length: filteredUsers?.length * 2 }).map((_, rowIndex) => (
                     <div className="flex" key={rowIndex}>
-                      {filteredUsers.map((_, index) => (
+                      {filteredUsers?.map((_, index) => (
                         <div className={`h-32 w-32 m-[3px] rounded-md flex items-center justify-center overflow-hidden text-sm`} key={_.name + index}>
                           <Image
                             src={`${process.env.NEXT_PUBLIC_IMG_CDN}/users-img/${_.avatarUrl}`}

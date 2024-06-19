@@ -38,6 +38,8 @@ services:
       - POSTGRES_DB=giveaways
     volumes:
       - giveaways_pg_data:/bitnami/postgresql
+      - ./server:/srv/app
+      - /srv/app/node_modules
     networks:
       - app-network
 

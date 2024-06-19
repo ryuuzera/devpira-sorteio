@@ -9,7 +9,7 @@ RUN yarn install
 
 # Copiar o código-fonte e o .env
 COPY . .
-COPY .env .env
+COPY .env.local .env.local
 
 # Build do projeto
 RUN yarn build
@@ -23,7 +23,7 @@ WORKDIR /app
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
-COPY --from=builder /app/.env ./
+COPY --from=builder /app/.env.local ./
 
 # Expor a porta e iniciar a aplicação
 EXPOSE 3000

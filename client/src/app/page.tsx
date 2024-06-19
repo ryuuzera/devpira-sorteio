@@ -2,7 +2,7 @@ import GiveawayPage from '@/page-components/giveaway';
 
 async function getUsers() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_DEPLOY_URL}/user`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_DEPLOY_URL}user`, {
       cache: 'no-cache',
     });
     return await res.json();

@@ -6,6 +6,7 @@ WORKDIR /app
 # Instalar dependências
 COPY package.json yarn.lock ./
 RUN yarn install
+RUN yarn add sharp --ignore-engines
 
 # Copiar o código-fonte e o .env
 COPY . .
@@ -24,8 +25,9 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/.env ./
+COPY --from=builder /app/public ./public
 
 # Expor as portas e iniciar a aplicação
 EXPOSE 3001
 EXPOSE 3002
-CMD ["node", "dist/index.js"]
+CMD ["yarn", "start"]
